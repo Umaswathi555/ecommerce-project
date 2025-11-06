@@ -1,22 +1,12 @@
 <?php
-// Check if Railway environment variables exist
-if(getenv('DB_HOST')) {
-    $host = getenv('DB_HOST');
-    $dbname = getenv('DB_NAME');
-    $user = getenv('DB_USER');
-    $password = getenv('DB_PASS');
-} else {
-    // Local XAMPP settings
-    $host = 'localhost';
-    $dbname = 'ecommerce';
-    $user = 'root';
-    $password = '';
-}
+$servername = "sql112.infinityfree.com";     // from InfinityFree (MySQL Hostname)
+$username = "if0_40351958";          // from InfinityFree (MySQL Username)
+$password = "Sgua@1043";           // your MySQL password
+$database = "if0_40351958_ecommerce";   // from InfinityFree (Database Name)
 
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "Connection failed: " . $e->getMessage();
+$conn = mysqli_connect($servername, $username, $password, $database);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
 ?>
