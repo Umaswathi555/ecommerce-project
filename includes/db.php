@@ -1,8 +1,8 @@
 <?php
 $servername = "sql112.infinityfree.com";    
 $username = "if0_40351958";         
-$password = "Sgua@1043";           
-$database = "if0_40351958_ecommerce";  
+$password = "1xRGrBXj6d";           
+$database = "if0_40351958_shopping";  
 $conn = mysqli_connect($servername, $username, $password, $database);
 
 if (!$conn) {
