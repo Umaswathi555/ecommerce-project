@@ -10,8 +10,8 @@ session_start();
 include 'includes/db.php'; // Include the database connection
 
 // Fetch products from the database
-$stmt = $conn->query("SELECT * FROM products");
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$result = mysqli_query($conn, "SELECT * FROM products");
+$products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
