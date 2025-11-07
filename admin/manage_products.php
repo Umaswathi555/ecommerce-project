@@ -4,12 +4,14 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php");
     exit();
 }
-?>
-<?php
+
 include '../includes/db.php';
-$stmt = $conn->query("SELECT * FROM products");
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch all products
+$result = mysqli_query($conn, "SELECT * FROM products");
+$products = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

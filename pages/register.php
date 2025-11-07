@@ -8,24 +8,28 @@ if (isset($_POST['register'])) {
     $role = 'user'; // Default role for users
 
     // Check if the email already exists
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
     if ($user) {
         echo "<script>alert('Email is already registered!');</script>";
     } else {
         // Insert new user
-        $stmt = $conn->prepare("INSERT INTO users (email, password, role) VALUES (?, ?, ?)");
-        $stmt->execute([$email, $password, $role]);
+        $stmt = mysqli_prepare($conn, "INSERT INTO users (email, password, role) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "sss", $email, $password, $role);
+        mysqli_stmt_execute($stmt);
 
         // Log the user in after successful registration
-        $_SESSION['user_id'] = $conn->lastInsertId();
+        $_SESSION['user_id'] = mysqli_insert_id($conn);
         header("Location: ../index.php"); // Redirect to the homepage
         exit();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

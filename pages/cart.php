@@ -12,49 +12,54 @@ $user_id = $_SESSION['user_id'];  // Assuming user ID is stored in session
 // Handle Add to Cart with Quantity
 if (isset($_POST['add_to_cart'])) {
     $product_id = $_POST['product_id'];
-    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;  // Default to 1 if quantity is not set
+    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
     // Check if product is already in the user's cart
-    $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ? AND product_id = ?");
-    $stmt->execute([$user_id, $product_id]);
-    $cart_item = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM cart WHERE user_id = ? AND product_id = ?");
+    mysqli_stmt_bind_param($stmt, "ii", $user_id, $product_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $cart_item = mysqli_fetch_assoc($result);
 
     if ($cart_item) {
-        // Update quantity if the product is already in the cart
         $new_quantity = $cart_item['quantity'] + $quantity;
-        $stmt = $conn->prepare("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
-        $stmt->execute([$new_quantity, $user_id, $product_id]);
+        $stmt = mysqli_prepare($conn, "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
+        mysqli_stmt_bind_param($stmt, "iii", $new_quantity, $user_id, $product_id);
+        mysqli_stmt_execute($stmt);
     } else {
-        // Add new product to the cart
-        $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
-        $stmt->execute([$user_id, $product_id, $quantity]);
+        $stmt = mysqli_prepare($conn, "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "iii", $user_id, $product_id, $quantity);
+        mysqli_stmt_execute($stmt);
     }
 }
 
 // Handle Product Removal from Cart
 if (isset($_POST['remove_from_cart'])) {
     $product_id = $_POST['product_id'];
-    $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
-    $stmt->execute([$user_id, $product_id]);
+    $stmt = mysqli_prepare($conn, "DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+    mysqli_stmt_bind_param($stmt, "ii", $user_id, $product_id);
+    mysqli_stmt_execute($stmt);
 }
 
 // Handle Quantity Update
 if (isset($_POST['update_quantity'])) {
     $product_id = $_POST['product_id'];
     $quantity = (int)$_POST['quantity'];
-
-    // Update the quantity in the cart
-    $stmt = $conn->prepare("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
-    $stmt->execute([$quantity, $user_id, $product_id]);
+    $stmt = mysqli_prepare($conn, "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
+    mysqli_stmt_bind_param($stmt, "iii", $quantity, $user_id, $product_id);
+    mysqli_stmt_execute($stmt);
 }
 
 // Fetch the user's cart items
-$stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$cart_items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = mysqli_prepare($conn, "SELECT * FROM cart WHERE user_id = ?");
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$cart_items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
-$total_cost = 0;  // Initialize total cost variable
+$total_cost = 0;  // Initialize total cost
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

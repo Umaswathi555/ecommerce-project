@@ -1,9 +1,13 @@
 <?php
-include 'includes/db.php';
+$servername = "sql112.infinityfree.com";
+$username = "if0_40351958";
+$password = "Sgua@1043";
+$database = "if0_40351958_ecommerce";
 
-if ($conn) {
-    echo "Database connected successfully!";
-} else {
-    echo "Failed to connect to the database.";
+$conn = mysqli_connect($servername, $username, $password, $database);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
+echo "Database connected successfully!";
 ?>

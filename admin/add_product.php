@@ -17,25 +17,25 @@ if (isset($_POST['add_product'])) {
         $image = basename($_FILES['image']['name']);
         $image = preg_replace("/[^a-zA-Z0-9\.\-_]/", "", $image); // sanitize filename
 
-        // Validate file type
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (!in_array($_FILES['image']['type'], $allowed_types)) {
             die("Invalid image type. Only JPG, PNG, and GIF are allowed.");
         }
 
-        // Upload image to images folder (note: Railway filesystem is ephemeral)
         move_uploaded_file($_FILES['image']['tmp_name'], "../images/$image");
     } else {
         $image = null; // If no image uploaded
     }
 
-    // Insert product into database
-    $stmt = $conn->prepare("INSERT INTO products (name, price, description, image) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$name, $price, $description, $image]);
+    // Insert product into database using mysqli
+    $stmt = mysqli_prepare($conn, "INSERT INTO products (name, price, description, image) VALUES (?, ?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "sdss", $name, $price, $description, $image);
+    mysqli_stmt_execute($stmt);
 
     echo "Product added successfully!";
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

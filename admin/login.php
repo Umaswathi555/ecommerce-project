@@ -7,9 +7,11 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     // Check if the email belongs to an admin
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND role = 'admin'");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE email = ? AND role = 'admin'");
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
     if ($user && password_verify($password, $user['password'])) {
         // Start admin session and redirect to dashboard
@@ -21,6 +23,7 @@ if (isset($_POST['login'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
